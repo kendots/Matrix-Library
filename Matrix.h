@@ -117,6 +117,19 @@ return a;
 }
 
 
+matrix MatRand(int m, int n, int x){
+int i,j;
+matrix a={m,n};
+MatInit(&a);
+srand(time(NULL));
+for (i=0; i<m; i++)
+for (j=0; j<n; j++){
+a.v[i][j]=rand()%x;
+}
+return a;
+}
+
+
 //c=a+b
 matrix Add (matrix a, matrix b){
 int i,j;
@@ -156,7 +169,6 @@ return 1;
 }
 
 
-
 //c = a*b (matrices)
 matrix Product(matrix a, matrix b){
 int i,j,k;
@@ -174,6 +186,31 @@ for (k=0; k<b.row; k++)
 c.v[i][j]+=a.v[i][k]*b.v[k][j];
 }
 return c;
+}
+
+
+matrix Transpose (matrix a){
+int i,j;
+matrix z={a.col, a.row};
+MatInit(&z);
+for (i=0; i<z.row; i++)
+for (j=0; j<z.col; j++)
+z.v[i][j]=a.v[j][i];
+return z;
+}
+
+
+//Trace of a square matrix is the sum of the elements on the diagonal
+double Trace (matrix a){
+if (a.row-a.col){
+puts("Error in Trace Function:\nThe matrix should be a square matrix");
+return 0;
+}
+
+int i,s=0;
+for (i=0; i<a.row; i++)
+s+=a.v[i][i];
+return s;
 }
 
 
@@ -289,18 +326,4 @@ z.v[j][i]=Det(b)/y;
 MatFree(b);
 }
 return z;
-}
-
-
-
-matrix MatRand(int m, int n, int x){
-int i,j;
-matrix a={m,n};
-MatInit(&a);
-srand(time(NULL));
-for (i=0; i<m; i++)
-for (j=0; j<n; j++){
-a.v[i][j]=rand()%x;
-}
-return a;
 }
