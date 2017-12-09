@@ -9,7 +9,7 @@ typedef struct {
 
 
 //free all memory in the matrix
-void freeMatrix (matrix a){
+void MatFree (matrix a){
 int i;
 for (i=0; i<a.row; i++)
 free(a.v[i]);
@@ -18,11 +18,11 @@ free(a.v);
 
 
 //allocate a matrix
-void initMatrix (matrix * a){
+void MatInit (matrix * a){
 int i;
 if (a->v!=NULL){
 puts("It was full");
-freeMatrix(*a);
+MatFree(*a);
 }
 
 a->v=(double **) malloc(a->row*sizeof(double *));
@@ -32,10 +32,10 @@ a->v[i]=(double *) malloc(a->col*sizeof(double));
 
 
 //Input a matrix from the user
-matrix Get (int m, int n){
+matrix MatGet (int m, int n){
 int i,j;
 matrix a={m,n};
-initMatrix(&a);
+MatInit(&a);
 for (i=0; i<m; i++)
 for (j=0; j<n; j++)
 scanf("%lf",&a.v[i][j]);
@@ -43,7 +43,7 @@ return a;
 }
 
 //Print a matrix to the user
-void Show (matrix a){
+void MatShow (matrix a){
 int i,j;
 puts("");
 for (i=0; i<a.row; i++){
@@ -61,7 +61,7 @@ return a;
 
 int i,j;
 matrix c={a.row+b.row,a.col};
-initMatrix(&c);
+MatInit(&c);
 for (i=0; i<a.row; i++)
 for (j=0; j<a.col; j++){
 c.v[i][j]=a.v[i][j];
@@ -80,7 +80,7 @@ return a;
 
 int i,j;
 matrix c={a.row, a.col+b.col};
-initMatrix(&c);
+MatInit(&c);
 for (i=0; i<a.row; i++)
 for (j=0; j<a.col; j++){
 c.v[i][j]=a.v[i][j];
@@ -95,7 +95,7 @@ return c;
 matrix I (int n){
 int i,j;
 matrix a={n,n};
-initMatrix(&a);
+MatInit(&a);
 for (i=0; i<a.row; i++)
 for (j=0; j<a.col; j++){
 if (i==j) a.v[i][j]=1;
@@ -106,10 +106,10 @@ return a;
 
 
 //a[i][j]=x for every i,j
-matrix cst (int m, int n, double x){
+matrix Cst (int m, int n, double x){
 int i,j;
 matrix a={m,n};
-initMatrix(&a);
+MatInit(&a);
 for (i=0; i<a.row; i++)
 for (j=0; j<a.col; j++)
 a.v[i][j]=x;
@@ -126,7 +126,7 @@ return a;
 }
 
 matrix c={a.row, a.col};
-initMatrix(&c);
+MatInit(&c);
 for (i=0; i<a.row; i++)
 for (j=0; j<a.col; j++)
 c.v[i][j]=a.v[i][j]+b.v[i][j];
@@ -138,7 +138,7 @@ return c;
 matrix Scalar (matrix a, double x){
 int i,j;
 matrix z={a.row, a.col};
-initMatrix(&z);
+MatInit(&z);
 for (i=0; i<a.row; i++)
 for (j=0; j<a.col; j++)
 z.v[i][j]=x*a.v[i][j];
@@ -165,7 +165,7 @@ puts("Error in the Product Function:\nThe inner sizes are different");
 return a;
 }
 matrix c={a.row, b.col};
-initMatrix(&c);
+MatInit(&c);
 
 for (i=0; i<a.row; i++)
 for (j=0; j<b.col; j++){
@@ -182,7 +182,7 @@ matrix Ref (matrix a){
 int i,j,x,y,m=a.row,n=a.col;
 double b,t;
 matrix z ={m, n};
-initMatrix(&z);
+MatInit(&z);
 for (i=0; i<m; i++)
 for (j=0; j<n; j++)
 z.v[i][j]=a.v[i][j];
@@ -227,7 +227,7 @@ return 1;
 int i,j,k,z,x=1,l;
 double s;
 matrix b={a.row-1,a.row-1};
-initMatrix(&b);
+MatInit(&b);
 
 if (a.row==1)
 s = a.v[0][0];
@@ -249,27 +249,26 @@ l=0;
 s=s+x*a.v[0][z]*Det(b);
 x=-x;
 }}
-freeMatrix(b);
+MatFree(b);
 return s;
 }
 
 
 matrix Inverse (matrix a){
 double x=Det(a),y;
-printf("Det = %g\n",x);
 if (!x){
 puts("Error in the Inverse Function:\nThe matrix is not Invertable");
 return a;
 }
 
 matrix z={a.row,a.col};
-initMatrix(&z);
+MatInit(&z);
 if (a.row<2) z.v[0][0]=1/x;
 
 else{
 int i,j,k,l,t,r,n=a.row;
 matrix b={n-1, n-1};
-initMatrix(&b);
+MatInit(&b);
 
 
 for (i=0; i<n; i++){
@@ -287,17 +286,17 @@ if ((i+j)%2 )y=-x;
 else y=x;
 z.v[j][i]=Det(b)/y;
 }}
-freeMatrix(b);
+MatFree(b);
 }
 return z;
 }
 
 
 
-matrix RandFill(int m, int n, int x){
+matrix MatRand(int m, int n, int x){
 int i,j;
 matrix a={m,n};
-initMatrix(&a);
+MatInit(&a);
 srand(time(NULL));
 for (i=0; i<m; i++)
 for (j=0; j<n; j++){
