@@ -2,9 +2,9 @@
 #include<time.h>
 
 typedef struct {
-	int row;
-	int col;
-	double ** v;
+int row;
+int col;
+double ** v;
 } matrix;
 
 
