@@ -32,14 +32,11 @@ a->v[i]=(double *) malloc(a->col*sizeof(double));
 
 
 //Input a matrix from the user
-matrix MatGet (int m, int n){
+void MatGet (matrix a){
 int i,j;
-matrix a={m,n};
-MatInit(&a);
-for (i=0; i<m; i++)
-for (j=0; j<n; j++)
+for (i=0; i<a.row; i++)
+for (j=0; j<a.col; j++)
 scanf("%lf",&a.v[i][j]);
-return a;
 }
 
 //Print a matrix to the user
@@ -53,151 +50,136 @@ puts("");
 }}
 
 
-matrix AddRow(matrix a, matrix b){
-if (a.col-b.col){
+void AddRow(matrix a, matrix b, matrix c){
+if ((a.col-b.col) || (a.col -c.col)){
 puts("Error in the AddRow Function:\nThe coloumns of the matrices should be equal");
-return a;
+return;
 }
 
 int i,j;
-matrix c={a.row+b.row,a.col};
-MatInit(&c);
 for (i=0; i<a.row; i++)
 for (j=0; j<a.col; j++){
 c.v[i][j]=a.v[i][j];
 if (i<b.row)
 c.v[i+a.row][j]=b.v[i][j];
-}
-return c;
-}
+}}
 
 
-matrix AddCol(matrix a, matrix b){
-if (a.row-b.row){
+void AddCol(matrix a, matrix b, matrix c){
+if ((a.row-b.row) || (a.row - c.row)){
 puts("Error in the AddCol Function:\nThe rows of the matrices should be equal");
-return a;
+return;
 }
 
 int i,j;
-matrix c={a.row, a.col+b.col};
-MatInit(&c);
 for (i=0; i<a.row; i++)
 for (j=0; j<a.col; j++){
 c.v[i][j]=a.v[i][j];
 if (j<b.col)
 c.v[i][j+a.col]=b.v[i][j];
-}
-return c;
-}
+}}
 
 
 //a=In
-matrix I (int n){
+void I (matrix a){
+if (a.row- a.col){
+puts("Error in the I Function:\nThe matrix should be a square matrix");
+return;
+}
+
 int i,j;
-matrix a={n,n};
-MatInit(&a);
 for (i=0; i<a.row; i++)
 for (j=0; j<a.col; j++){
 if (i==j) a.v[i][j]=1;
 else a.v[i][j]=0;
-}
-return a;
-}
+}}
 
 
 //a[i][j]=x for every i,j
-matrix Cst (int m, int n, double x){
+void Cst (matrix a, double x){
 int i,j;
-matrix a={m,n};
-MatInit(&a);
 for (i=0; i<a.row; i++)
 for (j=0; j<a.col; j++)
 a.v[i][j]=x;
-return a;
 }
 
 
-matrix MatRand(int m, int n, int x){
+void RandFill(matrix a, int x){
 int i,j;
-matrix a={m,n};
-MatInit(&a);
 srand(time(NULL));
-for (i=0; i<m; i++)
-for (j=0; j<n; j++){
+for (i=0; i<a.row; i++)
+for (j=0; j<a.col; j++){
 a.v[i][j]=rand()%x;
-}
-return a;
-}
+}}
 
 
 //c=a+b
-matrix Add (matrix a, matrix b){
+void Add (matrix a, matrix b, matrix c){
 int i,j;
-if ((a.row-b.row) || (a.col-b.col)){
-puts("Error in the Add Function:\nThe sizes of the matrices are different");
-return a;
+if ((a.row-b.row) || (a.col-b.col) || (a.row- c.row) || (a.col - c.col)){
+puts("Error in the Add Function:\nThe matrices should have the same sizes");
+return;
 }
 
-matrix c={a.row, a.col};
-MatInit(&c);
 for (i=0; i<a.row; i++)
 for (j=0; j<a.col; j++)
 c.v[i][j]=a.v[i][j]+b.v[i][j];
-return c;
 }
 
 
 //z = x*a (x in R)
-matrix Scalar (matrix a, double x){
+void Scalar (matrix a, matrix z, double x){
+if ((a.row-z.row) || (a.col- z.col)){
+puts("Error in the Scalar Function:\nThe matrices should have the same sizes");
+return;
+}
+
 int i,j;
-matrix z={a.row, a.col};
-MatInit(&z);
 for (i=0; i<a.row; i++)
 for (j=0; j<a.col; j++)
 z.v[i][j]=x*a.v[i][j];
-return z;
-}
-
-int Equal(matrix a, matrix b){
-if ((a.row - b.row) || (a.col - b.col))
-return 0;
-int i,j,n=a.col,m=a.row;
-for (i=0; i<m; i++)
-for (j=0; j<n; j++)
-if (a.v[i][j]-a.v[i][j]) return 0;
-return 1;
 }
 
 
 //c = a*b (matrices)
-matrix Product(matrix a, matrix b){
+void Product(matrix a, matrix b, matrix c){
 int i,j,k;
-if (a.col-b.row){
-puts("Error in the Product Function:\nThe inner sizes are different");
-return a;
+if ((a.col-b.row) ||(a.row -c.row) || (b.col - c.col)){
+puts("Error in the Product Function:\nThe inner sizes should be equal");
+return;
 }
-matrix c={a.row, b.col};
-MatInit(&c);
 
 for (i=0; i<a.row; i++)
 for (j=0; j<b.col; j++){
 c.v[i][j]=0;
 for (k=0; k<b.row; k++)
 c.v[i][j]+=a.v[i][k]*b.v[k][j];
-}
-return c;
-}
+}}
 
 
-matrix Transpose (matrix a){
+int Equal(matrix a, matrix z){
+if ((a.row - z.row) || (a.col - z.col))
+return 0;
 int i,j;
-matrix z={a.col, a.row};
-MatInit(&z);
+for (i=0; i<a.row; i++)
+for (j=0; j<a.col; j++)
+if (a.v[i][j]-z.v[i][j]) return 0;
+return 1;
+}
+
+
+void Transpose (matrix a, matrix z){
+if ((a.row- z.row) || (a.col-z.col)){
+puts("Error in the Transpose Function:\nThe matrices should have the same sizes");
+return;
+}
+
+int i,j;
 for (i=0; i<z.row; i++)
 for (j=0; j<z.col; j++)
 z.v[i][j]=a.v[j][i];
-return z;
 }
+
 
 
 //Trace of a square matrix is the sum of the elements on the diagonal
@@ -215,14 +197,19 @@ return s;
 
 
 //Row echelon form
-matrix Ref (matrix a){
+void Ref (matrix a, matrix z){
+if ((a.row-z.row) || (a.col- z.col)){
+puts("Error in the Ref Function:\nThe matrices should have the same sizes");
+return;
+}
+
 int i,j,x,y,m=a.row,n=a.col;
 double b,t;
-matrix z ={m, n};
-MatInit(&z);
+
 for (i=0; i<m; i++)
 for (j=0; j<n; j++)
 z.v[i][j]=a.v[i][j];
+
 i=0; j=0;
 for (i=0,y=0; i<m; i++,y++){
 if (z.v[y][i]<1e-4 && z.v[y][i]>-1e-4){
@@ -249,16 +236,14 @@ z.v[x][j]=(z.v[y][i]*z.v[x][j])-b* (z.v[y][i]*z.v[y][j]);
 else
 for (j=y; j<n; j++)
 z.v[x][j]=z.v[x][j]-b*z.v[y][j];
-}}
-return z;
-}
+}}}
 
 
 //Determinant
 double Det(matrix a){
 if (a.row - a.col){
 puts("Error in the Det Function:\nThe matrix should be a square matrix");
-return 1;
+return 0;
 }
 
 int i,j,k,z,x=1,l;
@@ -291,15 +276,19 @@ return s;
 }
 
 
-matrix Inverse (matrix a){
-double x=Det(a),y;
-if (!x){
-puts("Error in the Inverse Function:\nThe matrix is not Invertable");
-return a;
+void Inverse (matrix a, matrix z){
+if ((a.row-z.row) || (a.col- z.col) || (z.row-z.col)){
+puts("Error in the Inverse Function:\nThe matrices should have the same sizes and be square matrices");
+return;
 }
 
-matrix z={a.row,a.col};
-MatInit(&z);
+double x=Det(a),y;
+printf("Det = %g\n",x);
+if (!x){
+puts("Error in the Inverse Function:\nThe matrix is not Invertable");
+return;
+}
+
 if (a.row<2) z.v[0][0]=1/x;
 
 else{
@@ -324,6 +313,4 @@ else y=x;
 z.v[j][i]=Det(b)/y;
 }}
 MatFree(b);
-}
-return z;
-}
+}}
