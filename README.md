@@ -1,1 +1,1 @@
-# Matrix-Library
+# Matrix Library in C
